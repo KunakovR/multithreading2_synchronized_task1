@@ -3,38 +3,30 @@ import java.util.List;
 
 public class Dealership {
 
-    final int timeSell = 1000;
-    final int timeReceive = 3000;
-    final int countCars = 10;
-    List<Toyota> cars = new ArrayList<>(15);
+    private final int countCars = 10;
+    private final Seller seller = new Seller(this);
+    private final List<Toyota> cars = new ArrayList<>();
+    private final List<Toyota> soldCars = new ArrayList<>();
 
-    public synchronized Toyota sellToyota(){
-        try {
-            System.out.println(Thread.currentThread().getName() + "  зашел в автосалон");
-            while (cars.size() == 0) {
-                System.out.println("Машин нет");
-                wait();
-            }
-            Thread.sleep(timeSell);
-            System.out.println(Thread.currentThread().getName() + " уехал на новеньком авто");
-        } catch(InterruptedException ex) {
-            ex.printStackTrace();
-        }
-        return cars.remove(0);
+    public List<Toyota> getCars() {
+        return cars;
     }
 
-    public void acceptToyota(){
-        for (int i = 0; i < countCars; i++) {
-            try {
-                Thread.sleep(timeReceive);
-                cars.add(new Toyota());
-                System.out.println(Thread.currentThread().getName() + " выпустил 1 авто");
-                synchronized (this) {
-                    notify();
-                }
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
-            }
-        }
+    public List<Toyota> getSoldCars() {
+        return soldCars;
     }
+
+    public void sellToyota() {
+        seller.sellToyota();
+    }
+
+    public void acceptToyota() {
+        seller.receiveToyota();
+    }
+
+    public int getCountCars() {
+        return countCars;
+    }
+
+
 }
